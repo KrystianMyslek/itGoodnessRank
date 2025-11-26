@@ -2,14 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\Goodness;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('ranking')]
 class RankingController extends AbstractController
 {
-    #[Route('/')]
+
+    public function __construct(private Security $security) {
+        
+    }
+
+    #[Route('/list', name: 'ranking_list')]
     public function list(): Response
     {
 
@@ -19,7 +25,7 @@ class RankingController extends AbstractController
     }
 
 
-    #[Route('/add')]
+    #[Route('/add', name: 'ranking_add_goodness')]
     public function add(): Response
     {
 

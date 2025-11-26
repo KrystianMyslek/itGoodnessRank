@@ -1,4 +1,3 @@
-<div class="navigation" >
-    <div class="menu"></div>
-    <div class="profile"></div>
-</div>
+{% if is_granted(enum('App\\Model\\RoleEnum').User.value) %}
+    <div class="navigation" ></div>
+{% endif %}
