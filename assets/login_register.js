@@ -1,0 +1,1 @@
+import './styles/login_register.scss';

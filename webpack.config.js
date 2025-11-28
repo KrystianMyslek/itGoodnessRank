@@ -9,6 +9,7 @@ Encore
     .setPublicPath('/build')
 
     .addEntry('app', './assets/app.js')
+    .addEntry('login_register', './assets/login_register.js')
 
     .splitEntryChunks()
     .enableStimulusBridge('./assets/controllers.json')

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
++     {{ parent() }}
++     {{ encore_entry_link_tags('login_register') }}
++ {% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, { 'attr': {'id': 'register'} }) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.login) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.repeat_password) }}
+        {{ form_row(form.email) }}
+        
+        {{ form_row(form.save, { 'label': 'Zarejestruj sie' }) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
