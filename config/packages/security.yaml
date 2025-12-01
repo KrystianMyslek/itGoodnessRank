@@ -23,11 +23,10 @@ security:
 
             logout:
                 path: /logout
-                target: user_login
+                target: goodness_ranking
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/ranking, roles: ROLE_USER }
+        - { path: add_goodness, roles: ROLE_ADMIN }
 
 when@test:
     security:

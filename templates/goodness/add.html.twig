@@ -1,0 +1,19 @@
+{% extends 'template_base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        
+        {{ form_start(form, { 'attr': {'id': 'goodness'} }) }}
+            {{ form_errors(form) }}
+
+            {{ form_row(form.name) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.type) }}
+            {{ form_row(form.icon) }}
+            
+            {{ form_row(form.save, { 'label': 'Dodaj' }) }}
+
+        {{ form_end(form) }}
+
+    </div>
+{% endblock %}

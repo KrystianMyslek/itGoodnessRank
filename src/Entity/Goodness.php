@@ -2,9 +2,13 @@
 
 namespace App\Entity;
 
+use App\Model\GoodnessTypeEnum;
 use App\Repository\GoodnessRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: GoodnessRepository::class)]
 class Goodness
@@ -21,7 +25,7 @@ class Goodness
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?int $type = null;
+    private GoodnessTypeEnum $type;
 
     #[ORM\Column(length: 255)]
     private ?string $icon = null;
@@ -58,19 +62,19 @@ class Goodness
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType(): GoodnessTypeEnum
     {
         return $this->type;
     }
 
-    public function setType(int $type): static
+    public function setType(GoodnessTypeEnum $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): string
     {
         return $this->icon;
     }
@@ -81,6 +85,16 @@ class Goodness
 
         return $this;
     }
+
+    // public static function loadValidatorMetadata(ClassMetadata $metadata): void
+    // {
+    //     $metadata->addPropertyConstraint('icon', new Assert\Image(
+    //         minWidth: 200,
+    //         maxWidth: 600,
+    //         minHeight: 200,
+    //         maxHeight: 600,
+    //     ));
+    // }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {

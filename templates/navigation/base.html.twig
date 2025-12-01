@@ -1,0 +1,14 @@
+{% if login_form is not defined %}
+
+    <div class="navigation" >
+        {% if is_granted(enum('App\\Model\\RoleEnum').User.value) %}
+            {% include 'navigation/login.html.twig' %}
+        {% else %}
+            {% include 'navigation/logout.html.twig' %}
+        {% endif %}
+    </div>
+
+    <div class="title">
+        IT GOODNESS RANK
+    </div>
+{% endif %}

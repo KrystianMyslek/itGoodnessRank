@@ -17,9 +17,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 #[Route('user')]
 class UserController extends AbstractController
 {
-            public function __construct(private Security $security) {
-    }
+    public function __construct(private Security $security) {
 
+    }
+    
     #[Route('/login', name: 'user_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -29,6 +30,7 @@ class UserController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('user/login.html.twig', [
+            'login_form'    => true,
             'last_username' => $lastUsername,
             'error'         => $error,
         ]);
@@ -61,11 +63,12 @@ class UserController extends AbstractController
             $manager->persist($user);
             $manager->flush();
 
-            return $this->redirectToRoute('ranking_list');
+            return $this->redirectToRoute('goodness_ranking');
         }
 
         return $this->render('user/register.html.twig', [
-            'form' => $form,
+            'login_form' => true,
+            'form'       => $form,
         ]);
     }
 }
