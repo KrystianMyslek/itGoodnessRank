@@ -6,9 +6,6 @@ use App\Model\GoodnessTypeEnum;
 use App\Repository\GoodnessRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: GoodnessRepository::class)]
 class Goodness
@@ -67,6 +64,16 @@ class Goodness
         return $this->type;
     }
 
+    public function getTypeLabel(): string
+    {
+        return $this->type->getLabel();
+    }
+
+    public function getTypeIcon(): string
+    {
+        return $this->type->getIcon();
+    }
+
     public function setType(GoodnessTypeEnum $type): static
     {
         $this->type = $type;
@@ -86,16 +93,6 @@ class Goodness
         return $this;
     }
 
-    // public static function loadValidatorMetadata(ClassMetadata $metadata): void
-    // {
-    //     $metadata->addPropertyConstraint('icon', new Assert\Image(
-    //         minWidth: 200,
-    //         maxWidth: 600,
-    //         minHeight: 200,
-    //         maxHeight: 600,
-    //     ));
-    // }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->created_at;
@@ -107,5 +104,5 @@ class Goodness
 
         return $this;
     }
-    
+
 }

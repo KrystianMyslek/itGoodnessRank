@@ -36,7 +36,7 @@ class GoodnessController extends AbstractController
         Request $request,
         EntityManagerInterface $manager,
         FileUploader $fileUploader,
-        #[Autowire('%kernel.project_dir%/public/uploads/goodness_icon')] string $iconDirectory,
+        #[Autowire('%app.uploadsPath%/goodness_icon')] string $iconDirectory,
     ): Response
     {
 

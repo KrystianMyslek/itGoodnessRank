@@ -1,13 +1,20 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-+     {{ parent() }}
-+     {{ encore_entry_link_tags('login_register') }}
-+ {% endblock %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('login_register') }}
+{% endblock %}
 
-{% block body %}
+{% block background %}
+    <div class="background login_background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+{% endblock %}
 
-    {{ form_start(form, { 'attr': {'id': 'register'} }) }}
+{% block base %}
+
+    {{ form_start(form, { 'attr': {'id': 'login_form'} }) }}
         {{ form_errors(form) }}
 
         {{ form_row(form.login) }}
@@ -16,6 +23,9 @@
         {{ form_row(form.email) }}
         
         {{ form_row(form.save, { 'label': 'Zarejestruj sie' }) }}
+
+        <a href="{{ path('goodness_ranking') }}">Powrót</a>
+        <a class="login_link" href="{{ path('user_login') }}">Zaloguj się</a>
 
     {{ form_end(form) }}
 

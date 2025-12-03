@@ -5,11 +5,11 @@ namespace App\Form;
 use App\Entity\Goodness;
 use App\Model\GoodnessTypeEnum;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\UX\Dropzone\Form\DropzoneType;
 
 class GoodnessType extends AbstractType
 {
@@ -22,9 +22,12 @@ class GoodnessType extends AbstractType
             ->add('type', EnumType::class, [
                 'class' => GoodnessTypeEnum::class,
                 'expanded' => true,
-                'multiple' => false
+                'multiple' => false,
+                'choice_label' => function ($choice, string $key, mixed $value): string {
+                    return $choice->getLabel();
+                },
             ])
-            ->add('icon', FileType::class)
+            ->add('icon', DropzoneType::class)
             ->add('save', SubmitType::class)
         ;
     }

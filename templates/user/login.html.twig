@@ -5,6 +5,13 @@
     {{ encore_entry_link_tags('login_register') }}
 {% endblock %}
 
+{% block background %}
+    <div class="background login_background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+{% endblock %}
+
 {% block base %}
     <form id="login_form" action="{{ path('user_login') }}" method="post">
         {% if error %}
@@ -20,5 +27,9 @@
         <input type="hidden" name="_target_path" value="/goodness/ranking">
 
         <button type="submit">login</button>
+
+        <a href="{{ path('goodness_ranking') }}">Powrót</a>
+        <a class="register_link" href="{{ path('user_register') }}">Zarejestruj się</a>
+
     </form>
 {% endblock %}

@@ -2,6 +2,31 @@
 
 {% block body %}
     <div class="ranking">
+        {% for goodness in goodness_list %}
+            <div class="row goodness">
+                <div class="col-xl-3 col-sm-6 rank">
+                    <div class="gold">1</div>
+                    <div class="silver">2</div>
+                    <div class="brown">3</div>
+                </div>
 
+                <div class="col-xl-3 col-sm-6 info">
+                    <div class="name">
+                        {{ goodness.getName() }}
+                    </div>
+                    <div class="type">
+                        {{ goodness.getTypeLabel() }}
+                        <div class="type_icon">{{ goodness.getTypeIcon() | raw }}</div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-sm-8 desc">
+                    {{ goodness.getDescription() }}
+                </div>
+                
+                <div class="col-xl-2 col-sm-4">
+                    <img class="icon" src="{{ asset('uploads/goodness_icon/' ~ goodness.getIcon() ) }}" ></a>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

@@ -1,3 +1,5 @@
+@import "~bootstrap/scss/bootstrap";
+
 *,
 *:before,
 *:after {
@@ -19,6 +21,7 @@ body {
     transform: translate(-50%,-50%);
     left: 50%;
     top: 50%;
+    position: fixed;
 
     .shape {
         height: 200px;
@@ -61,10 +64,10 @@ body {
     box-shadow: 0 0 40px rgba(8,7,16,0.6);
     
     ul {
-        
         opacity: 0;
         width: 100%;
         margin-top: 100px;
+        padding: 0;
         
         a {
             text-decoration: none;
@@ -106,19 +109,21 @@ body {
     border: 2px solid rgba(255,255,255,0.1);
     box-shadow: 0 0 40px rgba(8,7,16,0.6);
     
-    padding: 10px 20px;
-    margin-top: 20px;
-    margin-right: 80px;
+    padding: 0 20px;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
 
-    float: right;
-    height: 80px;
-    width: calc(100% - 200px);
+    height: calc(100% - 140px) ;
+    width: 80px;
 
     text-align: center;
+    word-spacing: 100vw;
+
     color:white;
-    line-height: 60px;
-    font-size: 48px;
-    letter-spacing: 6px;
+    font-size: 32px;
 }
 
 .container {
@@ -130,11 +135,11 @@ body {
     box-shadow: 0 0 40px rgba(8,7,16,0.6);
     
     padding: 10px 20px;
-    margin-top: 20px;
-    margin-right: 80px;
+    margin: 20px;
 
     float: right;
-    width: calc(100% - 200px);
+    max-width: 100% !important;
+    width: calc(100% - 140px);
 }
 
 .navigation:hover {
@@ -148,8 +153,120 @@ body {
     }
 }
 
-.navigation:hover ~ .title,
+.navigation:hover ~ .title {
+    transition: all 0.15s ease-in;
+    height: 0;
+    border: 0;
+    font-size: 0;
+    overflow: hidden;
+}
+
 .navigation:hover ~ .container {
     transition: all 0.15s ease-in;
-    width: calc(100% - 460px);
+    width: calc(100% - 380px);
+}
+
+.ranking {
+    .goodness {
+        border: 2px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px 40px;
+        // height: 200px;
+
+        color: white;
+
+        .rank {
+            
+            div {
+                height: 40px;
+                border: 2px solid rgba(255,255,255,0.1);
+                margin: 10px 15px;
+                border-radius: 10px;
+                
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .gold {
+                background-color: #ffd700;
+            }
+            
+            .silver {
+                background-color: #c0c0c0;
+            }
+            
+            .brown {
+                background-color: #a17652;
+            }
+
+            div:hover {
+                border: 4px solid rgba(255,255,255);
+                cursor: pointer;
+            }
+        }
+        
+        .info {
+            .name {
+                font-size: 24px;
+            }
+            
+            .type {
+                line-height: 24px;
+                
+                .type_icon {
+                    float: left;
+                    margin-right: 5px;
+                }
+            }
+        }
+        
+        .desc {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .icon {
+            width: 150px;
+            height: 150px;
+            float: right;
+
+            background-color: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px;
+        }
+    
+    }
+
+    .goodness:hover {
+        background-color: rgba(255,255,255,0.1);
+    }
+
+    clear: both;
+}
+
+form#goodness_form {
+    color: white;
+
+
+    .dropzone-container {
+        width: 260px;
+        height: 260px;
+    }
+
+    .dropzone-preview {
+        margin: auto;
+    }
+
+    .dropzone-preview-filename {
+        display: none;
+    }
+
+    .dropzone-preview-image {
+        margin: auto;
+        min-height: 200px;
+        min-width: 200px;
+    }
 }

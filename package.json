@@ -2,10 +2,14 @@
   "devDependencies": {
     "@hotwired/stimulus": "^3.0.0",
     "@hotwired/turbo": "^7.1.0 || ^8.0",
+    "@popperjs/core": "^2.11.8",
     "@symfony/stimulus-bridge": "^3.2.0 || ^4.0.0",
+    "@symfony/ux-dropzone": "file:vendor/symfony/ux-dropzone/assets",
     "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
     "@symfony/webpack-encore": "^5.3.1",
+    "bootstrap": "^5.3.8",
     "core-js": "^3.0.0",
+    "jquery": "^3.7.1",
     "regenerator-runtime": "^0.13.2",
     "sass": "^1.94.2",
     "sass-loader": "^16.0.6",
@@ -18,8 +22,5 @@
     "dev": "encore dev",
     "watch": "encore dev --watch",
     "build": "encore production --progress"
-  },
-  "dependencies": {
-    "jquery": "^3.7.1"
   }
 }

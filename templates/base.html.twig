@@ -16,11 +16,7 @@
         {% endblock %}
     </head>
     <body>
-        <div class="background">
-            <div class="shape"></div>
-            <div class="shape"></div>
-        </div>
-
+        {% block background %}{% endblock %}
         {% include 'navigation/base.html.twig' %}
         {% block base %}{% endblock %}
     </body>

@@ -1,4 +1,10 @@
 {% if login_form is not defined %}
+    {% block background %}
+        <div class="background">
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    {% endblock %}
 
     <div class="navigation" >
         {% if is_granted(enum('App\\Model\\RoleEnum').User.value) %}
@@ -9,6 +15,6 @@
     </div>
 
     <div class="title">
-        IT GOODNESS RANK
+        I T - G O O D N E S S - R A N K
     </div>
 {% endif %}
