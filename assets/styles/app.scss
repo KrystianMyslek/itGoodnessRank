@@ -187,6 +187,11 @@ body {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                opacity: 0.4;
+            }
+
+            div.active {
+                opacity: 1;
             }
 
             .gold {
@@ -197,7 +202,7 @@ body {
                 background-color: #c0c0c0;
             }
             
-            .brown {
+            .bronze {
                 background-color: #a17652;
             }
 
@@ -205,6 +210,34 @@ body {
                 border: 4px solid rgba(255,255,255);
                 cursor: pointer;
             }
+            
+            div.active {
+                border: 0;
+                cursor: default;
+            }
+
+        }
+
+        .rank.disabled {
+            position: relative;
+        }
+
+        .rank.disabled::after {
+            content: "Zaloguj się aby ocenić";
+            
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding: 0 10px;
+            position: absolute;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            text-wrap: wrap;
         }
         
         .info {

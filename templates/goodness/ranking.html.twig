@@ -1,16 +1,31 @@
 {% extends 'template_base.html.twig' %}
 
+{% set disabled_rank = (is_granted("IS_AUTHENTICATED")) ? false : true %}
+
 {% block body %}
-    <div class="ranking">
+<div class="ranking">
         {% for goodness in goodness_list %}
             <div class="row goodness">
-                <div class="col-xl-3 col-sm-6 rank">
-                    <div class="gold">1</div>
-                    <div class="silver">2</div>
-                    <div class="brown">3</div>
+                <div class="col-xl-1 col-sm-2 score" >
+
                 </div>
 
-                <div class="col-xl-3 col-sm-6 info">
+                {% set goodness_scoring = 'none' %}
+                {% if vote_list[goodness.getId()] is defined %}
+                    {% set goodness_scoring = vote_list[goodness.getId()].name %}
+                {% endif %}
+
+                <div class="col-xl-1 col-sm-2 rank {% if disabled_rank %}disabled{% endif %}" >
+                    <input type="hidden" class="goodness_id" value="{{ goodness.getId() }}">
+
+                    {% for case in enum_cases('App\\Model\\VoteScoringEnum') %}
+                        <div class="{{ case.name | lower }} {% if goodness_scoring == case.name %}active{% endif %}" value="{{ case.name }}">
+                            <svg height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m363-310 117-71 117 71-31-133 104-90-137-11-53-126-53 126-137 11 104 90-31 133ZM480-28 346-160H160v-186L28-480l132-134v-186h186l134-132 134 132h186v186l132 134-132 134v186H614L480-28Zm0-112 100-100h140v-140l100-100-100-100v-140H580L480-820 380-720H240v140L140-480l100 100v140h140l100 100Zm0-340Z"/></svg>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-xl-3 col-sm-8 info">
                     <div class="name">
                         {{ goodness.getName() }}
                     </div>
@@ -19,7 +34,7 @@
                         <div class="type_icon">{{ goodness.getTypeIcon() | raw }}</div>
                     </div>
                 </div>
-                <div class="col-xl-4 col-sm-8 desc">
+                <div class="col-xl-5 col-sm-8 desc">
                     {{ goodness.getDescription() }}
                 </div>
                 
@@ -29,4 +44,33 @@
             </div>
         {% endfor %}
     </div>
+
+    <script>
+        $(document).ready(function() {
+            
+            $('.goodness').on('click', '.rank > div', function() {
+                var form = $(this).parents('.rank');
+                var div = $(this);
+
+                var params = {
+                    'goodness_id': form.find('.goodness_id').val(),
+                    'scoring_name': div.attr('value')
+                }
+
+                $.ajax({
+                    url: '{{ path("vote_goodness") }}',
+                    method: "POST",
+                    data: params,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            form.find('div').removeClass('active');
+                            div.addClass('active');
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
 {% endblock %}

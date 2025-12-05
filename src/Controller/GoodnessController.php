@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Goodness;
 use App\Form\GoodnessType;
+use App\Model\GoodnessStatusEnum;
 use App\Repository\GoodnessRepository;
+use App\Repository\VoteRepository;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,15 +21,23 @@ class GoodnessController extends AbstractController
 {
 
     public function __construct(private Security $security) {
-        
     }
-
+    
     #[Route('/ranking', name: 'goodness_ranking')]
-    public function list(GoodnessRepository $repository): Response
+    public function list(
+        GoodnessRepository $goodness_repository,
+        VoteRepository $vote_repository
+        ): Response
     {
+        $user = $this->security->getUser();
+
+        $goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Active]);
+        
+        $vote_list = !empty($user) ? $vote_repository->findScoringByUserAndBindByGoodnessId($user) : [];
 
         return $this->render('goodness/ranking.html.twig', [
-            'goodness_list' => $repository->findAll()
+            'goodness_list' => $goodness_list,
+            'vote_list' => $vote_list
         ]);
     }
 
@@ -67,6 +77,5 @@ class GoodnessController extends AbstractController
             'form' => $form,
         ]);
     }
-
 
 }

@@ -22,6 +22,12 @@ Encore
         config.corejs = '3.38';
     })
     .enableSassLoader()
+    .autoProvidejQuery()
+    .autoProvideVariables({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery',
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();

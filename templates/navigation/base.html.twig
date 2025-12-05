@@ -9,6 +9,8 @@
     <div class="navigation" >
         {% if is_granted(enum('App\\Model\\RoleEnum').User.value) %}
             {% include 'navigation/login.html.twig' %}
+        {% elseif is_granted(enum('App\\Model\\RoleEnum').Admin.value) %}
+            {% include 'navigation/login.html.twig' %}
         {% else %}
             {% include 'navigation/logout.html.twig' %}
         {% endif %}
