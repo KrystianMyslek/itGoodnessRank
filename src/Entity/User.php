@@ -85,6 +85,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function setRoles(array $roles): static
     {
+        foreach ($roles as &$role) {
+            if ($role instanceof RoleEnum) {
+                $role = $role->value;
+            }
+        }
+
         $this->roles = $roles;
 
         return $this;

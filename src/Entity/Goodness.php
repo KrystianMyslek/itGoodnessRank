@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Model\GoodnessTypeEnum;
 use App\Model\GoodnessStatusEnum;
+use App\Model\VoteScoringEnum;
 use App\Repository\GoodnessRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -142,6 +143,30 @@ class Goodness
     public function getVotes(): Collection
     {
         return $this->votes;
+    }
+
+    public function getVotesScoring(): array
+    {
+        $scoreing = [];
+        foreach (VoteScoringEnum::cases() as $score) {
+            $scoreing[$score->name] = 0;
+        }
+
+        foreach ($this->votes as $vote) {
+            $scoreing[$vote->getScoring()->name]++;
+        }
+
+        return $scoreing;
+    }
+
+    public function getVotesScoringSum(): int
+    {
+        $sum = 0;
+        foreach ($this->votes as $vote) {
+            $sum += $vote->getScoring()->value;
+        }
+
+        return $sum;
     }
 
     public function addVote(Vote $vote): static

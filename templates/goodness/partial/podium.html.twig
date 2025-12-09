@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-md-4 col-sm-4" >
+        <div class="score">
+            {% include 'goodness/partial/score.html.twig' %}
+        
+            <div class="medal" >
+                {% for case in enum_cases('App\\Model\\VoteScoringEnum') %}
+                    <div class="{{ case.name | lower }}" >
+                        {% include 'svg_icon/medal.html.twig' %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-5 col-sm-5">
+        <div class="info">
+            <div class="name">
+                {{ goodness.getName() }}
+            </div>
+            <div class="type">
+                {{ goodness.getTypeLabel() }}
+                <div class="type_icon">{{ goodness.getTypeIcon() | raw }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-sm-3">
+        <img class="icon" src="{{ asset('uploads/goodness_icon/' ~ goodness.getIcon() ) }}" ></a>
+    </div>
+</div>

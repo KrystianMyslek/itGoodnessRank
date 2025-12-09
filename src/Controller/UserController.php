@@ -37,7 +37,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/register', name: 'user_register')]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher) : Response
+    public function register(
+        Request $request,
+        EntityManagerInterface $manager,
+        UserPasswordHasherInterface $passwordHasher
+    ) : Response
     {
 
         $user = new User();
@@ -59,9 +63,10 @@ class UserController extends AbstractController
             $user->setRoles([RoleEnum::User]);
             $user->setCreatedAt(new \DateTimeImmutable('now'));
 
-
             $manager->persist($user);
             $manager->flush();
+
+            $this->security->login($user);
 
             return $this->redirectToRoute('goodness_ranking');
         }

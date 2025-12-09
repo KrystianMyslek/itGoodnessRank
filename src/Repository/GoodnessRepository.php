@@ -11,33 +11,24 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class GoodnessRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(private ManagerRegistry $registry)
     {
         parent::__construct($registry, Goodness::class);
     }
 
-//    /**
-//     * @return Goodness[] Returns an array of Goodness objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('g.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Goodness[] Returns an array of Goodness objects
+    */
+   public function findPodium(): array
+   {
+        return $this->createQueryBuilder('g')
+            ->join('g.votes', 'v')
+            ->addGroupBy('v.goodness')
+            ->orderBy('SUM(v.scoring)', 'DESC')
+            ->getQuery()
+            ->setMaxResults(3)
+            ->getResult();
 
-//    public function findOneBySomeField($value): ?Goodness
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+   }
+
 }

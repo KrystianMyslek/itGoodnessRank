@@ -27,17 +27,19 @@ class GoodnessController extends AbstractController
     public function list(
         GoodnessRepository $goodness_repository,
         VoteRepository $vote_repository
-        ): Response
+    ): Response
     {
         $user = $this->security->getUser();
 
         $goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Active]);
+        $podium_list = $goodness_repository->findPodium();
         
         $vote_list = !empty($user) ? $vote_repository->findScoringByUserAndBindByGoodnessId($user) : [];
 
         return $this->render('goodness/ranking.html.twig', [
             'goodness_list' => $goodness_list,
-            'vote_list' => $vote_list
+            'podium_list' => $podium_list,
+            'vote_list' => $vote_list,
         ]);
     }
 

@@ -1,0 +1,12 @@
+<div class="sum">
+    {{ goodness.getVotesScoringSum() }}
+</div>
+
+<div class="count">
+    {% set scoring = goodness.getVotesScoring() %}
+    {% for case in enum_cases('App\\Model\\VoteScoringEnum') %}
+        <div class="{{ case.name | lower }}" >
+            {{ scoring[case.name] }}
+        </div>
+    {% endfor %}
+</div>

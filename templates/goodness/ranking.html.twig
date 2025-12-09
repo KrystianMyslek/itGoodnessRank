@@ -3,11 +3,31 @@
 {% set disabled_rank = (is_granted("IS_AUTHENTICATED")) ? false : true %}
 
 {% block body %}
-<div class="ranking">
+    <div class="podium">
+        <div class="row goodness">
+            <div class="col-xl-6 col-sm-12">
+                <div class="place gold">
+                    {% set goodness = podium_list[0] %}
+                    {% include 'goodness/partial/podium.html.twig' %}
+                </div>
+            </div>
+            <div class="col-xl-6 col-sm-12">
+                <div class="place silver">
+                    {% set goodness = podium_list[1] %}
+                    {% include 'goodness/partial/podium.html.twig' %}
+                </div>
+                <div class="place bronze">
+                    {% set goodness = podium_list[2] %}
+                    {% include 'goodness/partial/podium.html.twig' %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ranking">
         {% for goodness in goodness_list %}
             <div class="row goodness">
                 <div class="col-xl-1 col-sm-2 score" >
-
+                    {% include 'goodness/partial/score.html.twig' %}
                 </div>
 
                 {% set goodness_scoring = 'none' %}
@@ -20,7 +40,7 @@
 
                     {% for case in enum_cases('App\\Model\\VoteScoringEnum') %}
                         <div class="{{ case.name | lower }} {% if goodness_scoring == case.name %}active{% endif %}" value="{{ case.name }}">
-                            <svg height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m363-310 117-71 117 71-31-133 104-90-137-11-53-126-53 126-137 11 104 90-31 133ZM480-28 346-160H160v-186L28-480l132-134v-186h186l134-132 134 132h186v186l132 134-132 134v186H614L480-28Zm0-112 100-100h140v-140l100-100-100-100v-140H580L480-820 380-720H240v140L140-480l100 100v140h140l100 100Zm0-340Z"/></svg>
+                            {% include 'svg_icon/medal.html.twig' %}
                         </div>
                     {% endfor %}
                 </div>
@@ -38,8 +58,8 @@
                     {{ goodness.getDescription() }}
                 </div>
                 
-                <div class="col-xl-2 col-sm-4">
-                    <img class="icon" src="{{ asset('uploads/goodness_icon/' ~ goodness.getIcon() ) }}" ></a>
+                <div class="col-xl-2 col-sm-4 icon">
+                    <img src="{{ asset('uploads/goodness_icon/' ~ goodness.getIcon() ) }}" ></a>
                 </div>
             </div>
         {% endfor %}

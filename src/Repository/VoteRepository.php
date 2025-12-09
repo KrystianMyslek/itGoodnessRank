@@ -20,6 +20,19 @@ class VoteRepository extends ServiceEntityRepository
     /**
      * @return Vote[] Returns an array of Vote objects
     */
+    public function findScoringAndBindByGoodnessId(): array
+    {
+        $votes = [];
+        foreach ($this->findAll() as $vote) {
+            $votes[$vote->getGoodness()->getId()] = $vote->getScoring();
+        }
+
+       return $votes;
+   }
+
+    /**
+     * @return Vote[] Returns an array of Vote objects
+    */
     public function findScoringByUserAndBindByGoodnessId(User $user): array
     {
         $votes = [];
@@ -30,13 +43,4 @@ class VoteRepository extends ServiceEntityRepository
        return $votes;
    }
 
-//    public function findOneBySomeField($value): ?Vote
-//    {
-//        return $this->createQueryBuilder('v')
-//            ->andWhere('v.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
