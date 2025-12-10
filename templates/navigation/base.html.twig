@@ -7,9 +7,16 @@
     {% endblock %}
 
     <div class="navigation" >
-        {% if is_granted(enum('App\\Model\\RoleEnum').User.value) %}
-            {% include 'navigation/login.html.twig' %}
-        {% elseif is_granted(enum('App\\Model\\RoleEnum').Admin.value) %}
+        {% if app.user %}
+            <div class="user_info">
+                <label>Zalogowany jako:</label>
+                <div class="login">{{ app.user.login }}</div>
+            </div>
+        {% endif %}
+
+        {% if is_granted(enum('App\\Model\\RoleEnum').Admin.value) %}
+            {% include 'navigation/admin_login.html.twig' %}
+        {% elseif is_granted(enum('App\\Model\\RoleEnum').User.value) %}
             {% include 'navigation/login.html.twig' %}
         {% else %}
             {% include 'navigation/logout.html.twig' %}
