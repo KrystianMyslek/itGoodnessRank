@@ -26,7 +26,9 @@ security:
                 target: goodness_ranking
 
     access_control:
-        - { path: add_goodness, roles: ROLE_ADMIN }
+        - { route: add_goodness, roles: ROLE_ADMIN }
+        - { route: edit_goodness, roles: ROLE_ADMIN }
+        - { route: goodness_list, roles: ROLE_ADMIN }
 
 when@test:
     security:

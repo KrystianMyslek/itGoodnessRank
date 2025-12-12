@@ -113,7 +113,7 @@ class Goodness
         return $this;
     }
 
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return $this->icon;
     }

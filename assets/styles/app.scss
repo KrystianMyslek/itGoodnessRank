@@ -484,6 +484,31 @@ body {
     clear: both;
 }
 
+.list {
+    .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+            width: 100px;
+            height: 100px;
+
+            background-color: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px;
+        }
+    }
+
+    .action_buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+}
+
 form#goodness_form {
     color: white;
 

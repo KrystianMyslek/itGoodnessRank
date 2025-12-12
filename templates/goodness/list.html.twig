@@ -1,0 +1,83 @@
+{% extends 'template_base.html.twig' %}
+
+{% block core %}
+    <div class="modal" role="dialog" id="delete_goodness_modal">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <p class="m-3">Jesteś pewny że chcesz usunąć ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="confirm btn btn-danger">Usuń pozycje</button>
+                    <button type="button" class="close btn btn-secondary" >Anuluj</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+
+    <div class="list">
+        <table class="table table-dark table-hover mt-3">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nazwa</th>
+                    <th scope="col">Typ</th>
+                    <th scope="col">Opis</th>
+                    <th scope="col">Ikona</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for goodness in goodness_list %}
+                    <tr>
+                        <td scope="row">
+                            {{ goodness.getId() }}
+                        </td>
+                        <td>{{ goodness.getName() }}</td>
+                        <td>{{ goodness.getTypeLabel() }}</td>
+                        <td>{{ goodness.getDescription() }}</td>
+                        <td>
+                            <div class="icon">
+                                <img src="{{ asset('uploads/goodness_icon/' ~ goodness.getIcon() ) }}" >
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action_buttons" >
+                                <a href="{{ path('edit_goodness', {id: goodness.id}) }}">
+                                    <button class="btn btn-primary m-2">EDYTUJ</button>
+                                </a>
+                                <a class="confirm_delete" href="{{ path("delete_goodness", {id: goodness.id}) }}">
+                                    <button class="btn btn-danger m-2">USUŃ</button>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var delete_goodness_href = "";
+            $('#delete_goodness_modal').on('shown.bs.modal', function () {
+                $(this).on('click', '.close', function (e) {
+                    $('#delete_goodness_modal').modal('hide');
+                });
+                $(this).on('click', '.confirm', function (e) {
+                    window.location.href = delete_goodness_href;
+                });
+            });
+
+            $('.list').on('click', '.confirm_delete', function (event) {
+                delete_goodness_href = $(this).attr('href');
+                event.preventDefault();
+                
+                $('#delete_goodness_modal').modal('show');
+            });
+        });
+    </script>
+{% endblock %}

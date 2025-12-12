@@ -1,0 +1,59 @@
+<div class="col-xl-6 col-sm-12">
+    {{ form_row(form.name, {
+        'label_attr': {
+            'class': 'form-label'
+        },
+        'attr': {
+            'class': 'form-control'
+        }
+    }) }}
+
+    {{ form_row(form.description, {
+        'label_attr': {
+            'class': 'form-label mt-3'
+        },
+        'attr': {
+            'class': 'form-control',
+            'rows': 5
+        }
+    }) }}
+</div>
+
+<div class="col-xl-3 col-sm-12">
+    {{ form_label(form.type, null, {
+        'label_attr': {
+            'class': 'form-label'
+        }
+    }) }}
+    {{ form_errors(form.type) }}
+    {% for child in form.type.children %}
+        <div class="form-check">
+            {{ form_label(child, null, {
+                'label_attr': {
+                    'class': 'form-chech-label'
+                }
+            }) }}
+            {{ form_widget(child, {
+                'attr': {
+                    'class': 'form-check-input'
+                }
+            }) }}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="col-xl-3 col-sm-12">
+    {{ form_row(form.iconFile, {
+        'label_attr': {
+            'class': 'form-label'
+        },
+        'attr': {
+            'placeholder': 'Przeciągnij i rzuć lub wciśnij',
+        }
+    }) }}
+
+    
+    {% if form.vars.data.icon is not null %}
+        <img class="saved_icon_preview" src="{{ asset('uploads/goodness_icon/' ~ form.vars.data.icon ) }}" >
+    {% endif %}
+</div>
