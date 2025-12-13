@@ -75,6 +75,7 @@ class GoodnessController extends AbstractController
                 $goodness->setIcon($iconFilename);
             }
 
+            $goodness->setStatus(GoodnessStatusEnum::Active);
             $goodness->setCreatedAt(new \DateTimeImmutable('now'));
             
             $manager->persist($goodness);
