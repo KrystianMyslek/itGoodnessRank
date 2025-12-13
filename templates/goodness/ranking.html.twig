@@ -5,22 +5,24 @@
 {% block body %}
     <div class="podium">
         <div class="row goodness">
-            <div class="col-xl-6 col-sm-12">
-                <div class="place gold">
-                    {% set goodness = podium_list[0] %}
-                    {% include 'goodness/partial/podium.html.twig' %}
+            {% if podium_list is not empty %}
+                <div class="col-xl-6 col-sm-12">
+                    <div class="place gold">
+                        {% set goodness = podium_list[0] %}
+                        {% include 'goodness/partial/podium.html.twig' %}
+                    </div>
                 </div>
-            </div>
-            <div class="col-xl-6 col-sm-12">
-                <div class="place silver">
-                    {% set goodness = podium_list[1] %}
-                    {% include 'goodness/partial/podium.html.twig' %}
+                <div class="col-xl-6 col-sm-12">
+                    <div class="place silver">
+                        {% set goodness = podium_list[1] %}
+                        {% include 'goodness/partial/podium.html.twig' %}
+                    </div>
+                    <div class="place bronze">
+                        {% set goodness = podium_list[2] %}
+                        {% include 'goodness/partial/podium.html.twig' %}
+                    </div>
                 </div>
-                <div class="place bronze">
-                    {% set goodness = podium_list[2] %}
-                    {% include 'goodness/partial/podium.html.twig' %}
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
     <div class="ranking">
