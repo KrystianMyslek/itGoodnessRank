@@ -11,13 +11,18 @@
         
             {% include "goodness/_form.html.twig" %}
 
-            {{ form_row(form.save, {
-                'label': 'Zapisz',
-                'attr': {
-                    'class': 'btn btn-primary mt-3'
-                }
-            }) }}
+            <div class="col-12 d-flex justify-content-start mt-3">
+                {{ form_row(form.save, {
+                    'label': 'Zapisz',
+                    'attr': {
+                        'class': 'btn btn-primary'
+                    }
+                }) }}
 
+                <a class="confirm_delete mx-3" href="{{ path("delete_goodness", {id: form.vars.data.id}) }}">
+                    <button class="btn btn-danger">USUŃ</button>
+                </a>
+            </div>
         </div>
 
     {{ form_end(form) }}

@@ -26,9 +26,16 @@ security:
                 target: goodness_ranking
 
     access_control:
+        - { path: ^/_profiler/*, roles: PUBLIC_ACCESS }
+        - { path: ^/_wdt/*, roles: PUBLIC_ACCESS }
+        
+        - { path: ^/user/*, roles: PUBLIC_ACCESS }
+        - { path: ^/goodness/ranking, roles: PUBLIC_ACCESS }
+
         - { route: add_goodness, roles: ROLE_ADMIN }
         - { route: edit_goodness, roles: ROLE_ADMIN }
         - { route: goodness_list, roles: ROLE_ADMIN }
+        - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:

@@ -16,16 +16,18 @@
     <div class="col-md-5 col-sm-5">
         <div class="info">
             <div class="name">
-                {{ goodness.getName() }}
+                {{ goodness.getName() ?? '-' }}
             </div>
             <div class="type">
-                {{ goodness.getTypeLabel() }}
-                <div class="type_icon">{{ goodness.getTypeIcon() | raw }}</div>
+                {{ goodness.getTypeLabel() ?? '-' }}
+                <div class="type_icon">{{ (goodness.getTypeIcon() ?? '-') | raw }}</div>
             </div>
         </div>
     </div>
     
     <div class="col-md-3 col-sm-3">
-        <img class="icon" src="{{ asset('uploads/goodness_icon/' ~ goodness.getIcon() ) }}" ></a>
+        {% if goodness.getIcon() ?? false %}
+            <img class="icon" src="{{ asset('uploads/goodness_icon/' ~ goodness.getIcon()  ) }}" ></a>
+        {% endif %}
     </div>
 </div>

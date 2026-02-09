@@ -46,6 +46,9 @@
                         </td>
                         <td>
                             <div class="action_buttons" >
+                                <a href="{{ path('approve_goodness', {id: goodness.id}) }}">
+                                    <button class="btn btn-success m-2">ZATWIERDŹ</button>
+                                </a>
                                 <a href="{{ path('edit_goodness', {id: goodness.id}) }}">
                                     <button class="btn btn-primary m-2">EDYTUJ</button>
                                 </a>
