@@ -7,7 +7,7 @@ use App\Form\GoodnessType;
 use App\Model\GoodnessStatusEnum;
 use App\Repository\GoodnessRepository;
 use App\Repository\VoteRepository;
-use App\Service\FileUploader;
+use App\Service\FileUploaderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,210 +19,203 @@ use Symfony\Component\Routing\Attribute\Route;
 class GoodnessController extends AbstractController
 {
 
-    public function __construct(private Security $security) {
-    }
-    
-    #[Route(['/ranking', '/'], name: 'goodness_ranking')]
-    public function ranking(
-        GoodnessRepository $goodness_repository,
-        VoteRepository $vote_repository
-    ): Response
-    {
-        $user = $this->security->getUser();
+	public function __construct(private Security $security)
+	{
+	}
 
-        $goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Active]);
-        $podium_list = $goodness_repository->findPodium();
-        
-        $vote_list = !empty($user) ? $vote_repository->findScoringByUserAndBindByGoodnessId($user) : [];
+	#[Route(['/ranking', '/'], name: 'goodness_ranking')]
+	public function ranking(
+		GoodnessRepository $goodness_repository,
+		VoteRepository $vote_repository
+	): Response {
+		$user = $this->security->getUser();
 
-        return $this->render('goodness/ranking.html.twig', [
-            'goodness_list' => $goodness_list,
-            'podium_list' => $podium_list,
-            'vote_list' => $vote_list,
-        ]);
-    }
-    
-    #[Route('/list', name: 'goodness_list')]
-    public function list(
-        GoodnessRepository $goodness_repository,
-    ): Response
-    {
-        $goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Active]);
+		$goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Active]);
+		$podium_list = $goodness_repository->findPodium();
 
-        return $this->render('goodness/list.html.twig', [
-            'goodness_list' => $goodness_list,
-        ]);
-    }
+		$vote_list = !empty($user) ? $vote_repository->findScoringByUserAndBindByGoodnessId($user) : [];
 
-    #[Route('/add', name: 'add_goodness')]
-    public function add(
-        Request $request,
-        EntityManagerInterface $manager,
-        FileUploader $fileUploader,
-    ): Response
-    {
+		return $this->render('goodness/ranking.html.twig', [
+			'goodness_list' => $goodness_list,
+			'podium_list' => $podium_list,
+			'vote_list' => $vote_list,
+		]);
+	}
 
-        $goodness = new Goodness();
-        
-        $form = $this->createForm(GoodnessType::class, $goodness);
-        $form->handleRequest($request);
-        
-        if ($form->isSubmitted() && $form->isValid()) {
-            $iconFile = $form->get('iconFile')->getData();
-            if ($iconFile) {
-                $iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
-                
-                $goodness->setIcon($iconFilename);
-            }
+	#[Route('/list', name: 'goodness_list')]
+	public function list(
+		GoodnessRepository $goodness_repository,
+	): Response {
+		$goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Active]);
 
-            $goodness->setStatus(GoodnessStatusEnum::Active);
-            $goodness->setCreatedAt(new \DateTimeImmutable('now'));
-            
-            $manager->persist($goodness);
-            $manager->flush();
+		return $this->render('goodness/list.html.twig', [
+			'goodness_list' => $goodness_list,
+		]);
+	}
 
-            $this->addFlash(
-                'success',
-                'Pozycja została zapisana'
-            );
+	#[Route('/add', name: 'add_goodness')]
+	public function add(
+		Request $request,
+		EntityManagerInterface $manager,
+		FileUploaderService $fileUploader,
+	): Response {
 
-            return $this->redirectToRoute('goodness_ranking');
-        }
+		$goodness = new Goodness();
 
-        return $this->render('goodness/add.html.twig', [
-            'title' => 'Dodaj',
-            'form' => $form,
-        ]);
-    }
+		$form = $this->createForm(GoodnessType::class, $goodness);
+		$form->handleRequest($request);
 
-    #[Route('/edit/{id<\d+>}', name: 'edit_goodness')]
-    public function edit(
-        Goodness $goodness,
-        Request $request,
-        EntityManagerInterface $manager,
-        FileUploader $fileUploader,
-    ): Response
-    {
+		if ($form->isSubmitted() && $form->isValid()) {
+			$iconFile = $form->get('iconFile')->getData();
+			if ($iconFile) {
+				$iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
 
-        $form = $this->createForm(GoodnessType::class, $goodness);
-        $form->handleRequest($request);
+				$goodness->setIcon($iconFilename);
+			}
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $iconFile = $form->get('iconFile')->getData();
-            if ($iconFile) {
-                $iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
-    
-                $goodness->setIcon($iconFilename);
-            }
+			$goodness->setStatus(GoodnessStatusEnum::Active);
+			$goodness->setCreatedAt(new \DateTimeImmutable('now'));
 
-            if ($goodness->getStatus() === GoodnessStatusEnum::Proposal) {
-                $goodness->setStatus(GoodnessStatusEnum::Active);
-            }
+			$manager->persist($goodness);
+			$manager->flush();
 
-            $goodness->setCreatedAt(new \DateTimeImmutable('now'));
+			$this->addFlash(
+				'success',
+				'Pozycja została zapisana'
+			);
 
-            $manager->flush();
+			return $this->redirectToRoute('goodness_ranking');
+		}
 
-            $this->addFlash(
-                'success',
-                'Pozycja została zaktualizowana'
-            );
+		return $this->render('goodness/add.html.twig', [
+			'title' => 'Dodaj',
+			'form' => $form,
+		]);
+	}
 
-            return $this->redirectToRoute('goodness_list');
-        }
+	#[Route('/edit/{id<\d+>}', name: 'edit_goodness')]
+	public function edit(
+		Goodness $goodness,
+		Request $request,
+		EntityManagerInterface $manager,
+		FileUploaderService $fileUploader,
+	): Response {
 
-        return $this->render('goodness/edit.html.twig', [
-            'form' => $form,
-        ]);
-    }
+		$form = $this->createForm(GoodnessType::class, $goodness);
+		$form->handleRequest($request);
 
-    #[Route('/delete/{id<\d+>}', name: 'delete_goodness')]
-    public function delete(
-        Goodness $goodness,
-        EntityManagerInterface $manager,
-    ): Response
-    {
-        $goodness->setStatus(GoodnessStatusEnum::Deleted);
+		if ($form->isSubmitted() && $form->isValid()) {
+			$iconFile = $form->get('iconFile')->getData();
+			if ($iconFile) {
+				$iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
 
-        $manager->flush();
+				$goodness->setIcon($iconFilename);
+			}
 
-        $this->addFlash(
-            'success',
-            'Pozycja została usunięta'
-        );
+			if ($goodness->getStatus() === GoodnessStatusEnum::Proposal) {
+				$goodness->setStatus(GoodnessStatusEnum::Active);
+			}
 
-        return $this->redirectToRoute('goodness_list');
-    }
+			$goodness->setCreatedAt(new \DateTimeImmutable('now'));
 
-    #[Route('/propose', name: 'propose_goodness')]
-    public function propose(
-        Request $request,
-        EntityManagerInterface $manager,
-        FileUploader $fileUploader,
-    ): Response
-    {
+			$manager->flush();
 
-        $goodness = new Goodness();
-        
-        $form = $this->createForm(GoodnessType::class, $goodness);
-        $form->handleRequest($request);
-        
-        if ($form->isSubmitted() && $form->isValid()) {
-            $iconFile = $form->get('iconFile')->getData();
-            if ($iconFile) {
-                $iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
-                
-                $goodness->setIcon($iconFilename);
-            }
+			$this->addFlash(
+				'success',
+				'Pozycja została zaktualizowana'
+			);
 
-            $goodness->setStatus(GoodnessStatusEnum::Proposal);
-            $goodness->setCreatedAt(new \DateTimeImmutable('now'));
-            
-            $manager->persist($goodness);
-            $manager->flush();
+			return $this->redirectToRoute('goodness_list');
+		}
 
-            $this->addFlash(
-                'success',
-                'Pozycja została zaproponowana'
-            );
+		return $this->render('goodness/edit.html.twig', [
+			'form' => $form,
+		]);
+	}
 
-            return $this->redirectToRoute('goodness_ranking');
-        }
+	#[Route('/delete/{id<\d+>}', name: 'delete_goodness')]
+	public function delete(
+		Goodness $goodness,
+		EntityManagerInterface $manager,
+	): Response {
+		$goodness->setStatus(GoodnessStatusEnum::Deleted);
 
-        return $this->render('goodness/add.html.twig', [
-            'title' => 'Zaproponuj',
-            'form' => $form,
-        ]);
-    }
+		$manager->flush();
 
-    #[Route('/proposal_list', name: 'proposal_goodness_list')]
-    public function proposalList(
-        GoodnessRepository $goodness_repository,
-    ): Response
-    {
-        $goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Proposal]);
+		$this->addFlash(
+			'success',
+			'Pozycja została usunięta'
+		);
 
-        return $this->render('goodness/proposal_list.html.twig', [
-            'goodness_list' => $goodness_list,
-        ]);
-    }
+		return $this->redirectToRoute('goodness_list');
+	}
 
-    #[Route('/approve/{id<\d+>}', name: 'approve_goodness')]
-    public function approve(
-        Goodness $goodness,
-        EntityManagerInterface $manager,
-    ): Response
-    {
-        $goodness->setStatus(GoodnessStatusEnum::Active);
+	#[Route('/propose', name: 'propose_goodness')]
+	public function propose(
+		Request $request,
+		EntityManagerInterface $manager,
+		FileUploaderService $fileUploader,
+	): Response {
 
-        $manager->flush();
+		$goodness = new Goodness();
 
-        $this->addFlash(
-            'success',
-            'Pozycja została zatwierdzona'
-        );
+		$form = $this->createForm(GoodnessType::class, $goodness);
+		$form->handleRequest($request);
 
-        return $this->redirectToRoute('proposal_goodness_list');
-    }
+		if ($form->isSubmitted() && $form->isValid()) {
+			$iconFile = $form->get('iconFile')->getData();
+			if ($iconFile) {
+				$iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
+
+				$goodness->setIcon($iconFilename);
+			}
+
+			$goodness->setStatus(GoodnessStatusEnum::Proposal);
+			$goodness->setCreatedAt(new \DateTimeImmutable('now'));
+
+			$manager->persist($goodness);
+			$manager->flush();
+
+			$this->addFlash(
+				'success',
+				'Pozycja została zaproponowana'
+			);
+
+			return $this->redirectToRoute('goodness_ranking');
+		}
+
+		return $this->render('goodness/add.html.twig', [
+			'title' => 'Zaproponuj',
+			'form' => $form,
+		]);
+	}
+
+	#[Route('/proposal_list', name: 'proposal_goodness_list')]
+	public function proposalList(
+		GoodnessRepository $goodness_repository,
+	): Response {
+		$goodness_list = $goodness_repository->findBy(['status' => GoodnessStatusEnum::Proposal]);
+
+		return $this->render('goodness/proposal_list.html.twig', [
+			'goodness_list' => $goodness_list,
+		]);
+	}
+
+	#[Route('/approve/{id<\d+>}', name: 'approve_goodness')]
+	public function approve(
+		Goodness $goodness,
+		EntityManagerInterface $manager,
+	): Response {
+		$goodness->setStatus(GoodnessStatusEnum::Active);
+
+		$manager->flush();
+
+		$this->addFlash(
+			'success',
+			'Pozycja została zatwierdzona'
+		);
+
+		return $this->redirectToRoute('proposal_goodness_list');
+	}
 
 }

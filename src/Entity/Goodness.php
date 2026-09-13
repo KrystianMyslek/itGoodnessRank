@@ -43,8 +43,6 @@ class Goodness
     #[ORM\OneToMany(targetEntity: Vote::class, mappedBy: 'goodness')]
     private Collection $votes;
 
-    #[ORM\Column]
-
     public function __construct()
     {
         $this->votes = new ArrayCollection();

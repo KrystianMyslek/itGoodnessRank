@@ -5,7 +5,7 @@
 {% block body %}
     <div class="podium">
         <div class="row goodness">
-            {% if podium_list is not empty %}
+            {% if (podium_list is not empty and podium_list|length >= 3) %}
                 <div class="col-xl-6 col-sm-12">
                     <div class="place gold">
                         {% set goodness = podium_list[0] %}

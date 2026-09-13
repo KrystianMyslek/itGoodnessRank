@@ -1,0 +1,50 @@
+services:
+    # PHP-FPM Service
+    php:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: symfony_php
+        volumes:
+            - .:/var/www/html
+        networks:
+            - symfony_network
+        depends_on:
+            - database
+
+    # Nginx Service
+    nginx:
+        image: nginx:alpine
+        container_name: symfony_nginx
+        ports:
+            - 8080:80
+        volumes:
+            - .:/var/www/html
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - symfony_network
+        depends_on:
+            - php
+
+    # MySQL Database Service
+    database:
+        image: mysql:8.0
+        container_name: symfony_mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root_p455w0rd
+            MYSQL_DATABASE: symfony_db
+            MYSQL_USER: symfony
+            MYSQL_PASSWORD: symfony_p455w0rd
+        ports:
+            - 3306:3306
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - symfony_network
+
+networks:
+    symfony_network:
+        driver: bridge
+
+volumes:
+    mysql_data:
