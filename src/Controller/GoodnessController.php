@@ -7,8 +7,7 @@ use App\Form\GoodnessType;
 use App\Model\GoodnessStatusEnum;
 use App\Repository\GoodnessRepository;
 use App\Repository\VoteRepository;
-use App\Service\FileUploaderService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\GoodnessService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,8 +36,8 @@ class GoodnessController extends AbstractController
 
 		return $this->render('goodness/ranking.html.twig', [
 			'goodness_list' => $goodness_list,
-			'podium_list' => $podium_list,
-			'vote_list' => $vote_list,
+			'podium_list'   => $podium_list,
+			'vote_list'     => $vote_list,
 		]);
 	}
 
@@ -56,28 +55,19 @@ class GoodnessController extends AbstractController
 	#[Route('/add', name: 'add_goodness')]
 	public function add(
 		Request $request,
-		EntityManagerInterface $manager,
-		FileUploaderService $fileUploader,
+		GoodnessService $goodnessService,
 	): Response {
-
 		$goodness = new Goodness();
 
 		$form = $this->createForm(GoodnessType::class, $goodness);
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			$iconFile = $form->get('iconFile')->getData();
-			if ($iconFile) {
-				$iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
-
-				$goodness->setIcon($iconFilename);
+			if ($form->has('iconFile')) {
+				$goodness = $goodnessService->setIcon($goodness, $form->get('iconFile')->getData());
 			}
 
-			$goodness->setStatus(GoodnessStatusEnum::Active);
-			$goodness->setCreatedAt(new \DateTimeImmutable('now'));
-
-			$manager->persist($goodness);
-			$manager->flush();
+			$goodnessService->create($goodness);
 
 			$this->addFlash(
 				'success',
@@ -89,7 +79,7 @@ class GoodnessController extends AbstractController
 
 		return $this->render('goodness/add.html.twig', [
 			'title' => 'Dodaj',
-			'form' => $form,
+			'form'  => $form,
 		]);
 	}
 
@@ -97,28 +87,18 @@ class GoodnessController extends AbstractController
 	public function edit(
 		Goodness $goodness,
 		Request $request,
-		EntityManagerInterface $manager,
-		FileUploaderService $fileUploader,
+		GoodnessService $goodnessService,
 	): Response {
 
 		$form = $this->createForm(GoodnessType::class, $goodness);
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			$iconFile = $form->get('iconFile')->getData();
-			if ($iconFile) {
-				$iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
-
-				$goodness->setIcon($iconFilename);
+			if ($form->has('iconFile')) {
+				$goodness = $goodnessService->setIcon($goodness, $form->get('iconFile')->getData());
 			}
 
-			if ($goodness->getStatus() === GoodnessStatusEnum::Proposal) {
-				$goodness->setStatus(GoodnessStatusEnum::Active);
-			}
-
-			$goodness->setCreatedAt(new \DateTimeImmutable('now'));
-
-			$manager->flush();
+			$goodnessService->update($goodness);
 
 			$this->addFlash(
 				'success',
@@ -136,11 +116,9 @@ class GoodnessController extends AbstractController
 	#[Route('/delete/{id<\d+>}', name: 'delete_goodness')]
 	public function delete(
 		Goodness $goodness,
-		EntityManagerInterface $manager,
+		GoodnessService $goodnessService,
 	): Response {
-		$goodness->setStatus(GoodnessStatusEnum::Deleted);
-
-		$manager->flush();
+		$goodnessService->delete($goodness);
 
 		$this->addFlash(
 			'success',
@@ -153,8 +131,7 @@ class GoodnessController extends AbstractController
 	#[Route('/propose', name: 'propose_goodness')]
 	public function propose(
 		Request $request,
-		EntityManagerInterface $manager,
-		FileUploaderService $fileUploader,
+		GoodnessService $goodnessService,
 	): Response {
 
 		$goodness = new Goodness();
@@ -163,18 +140,11 @@ class GoodnessController extends AbstractController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			$iconFile = $form->get('iconFile')->getData();
-			if ($iconFile) {
-				$iconFilename = $fileUploader->upload($iconFile, 'goodness_icon');
-
-				$goodness->setIcon($iconFilename);
+			if ($form->has('iconFile')) {
+				$goodness = $goodnessService->setIcon($goodness, $form->get('iconFile')->getData());
 			}
 
-			$goodness->setStatus(GoodnessStatusEnum::Proposal);
-			$goodness->setCreatedAt(new \DateTimeImmutable('now'));
-
-			$manager->persist($goodness);
-			$manager->flush();
+			$goodnessService->createProposal($goodness);
 
 			$this->addFlash(
 				'success',
@@ -186,7 +156,7 @@ class GoodnessController extends AbstractController
 
 		return $this->render('goodness/add.html.twig', [
 			'title' => 'Zaproponuj',
-			'form' => $form,
+			'form'  => $form,
 		]);
 	}
 
@@ -204,11 +174,9 @@ class GoodnessController extends AbstractController
 	#[Route('/approve/{id<\d+>}', name: 'approve_goodness')]
 	public function approve(
 		Goodness $goodness,
-		EntityManagerInterface $manager,
+		GoodnessService $goodnessService,
 	): Response {
-		$goodness->setStatus(GoodnessStatusEnum::Active);
-
-		$manager->flush();
+		$goodnessService->approve($goodness);
 
 		$this->addFlash(
 			'success',

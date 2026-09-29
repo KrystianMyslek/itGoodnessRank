@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Goodness;
 use App\Entity\User;
-use App\Entity\Vote;
 use App\Model\VoteScoringEnum;
 use App\Repository\GoodnessRepository;
 use App\Repository\VoteRepository;
+use App\Service\VoteService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -18,83 +17,66 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('vote')]
 class VoteController extends AbstractController
 {
-    private User $user;
+	private User $user;
 
-    public function __construct(
-        private Security $security,
-        private EntityManagerInterface $manager
-                
-    ) {
-        $this->user = $security->getUser();
-    }
+	public function __construct(
+		private Security $security,
+		private EntityManagerInterface $manager
 
-    #[Route('/vote', name: 'vote_goodness')]
-    public function vote(
-        Request $request,
-        GoodnessRepository $goodness_repository,
-        VoteRepository $vote_repository
-    ): JsonResponse
-    {
-        
-        $goodness_id = $request->get('goodness_id');
-        $scoring_name = $request->get('scoring_name');
-        
-        if (empty($goodness_id)) {
-            $response = $this->setResponse('error', 'goodness empty');
-            return $this->json($response);
-        } 
-        
-        if (empty($scoring_name)) {
-            $response = $this->setResponse('error', 'scoring empty');
-            return $this->json($response);
-        } 
+	) {
+		$this->user = $security->getUser();
+	}
 
-        $vote = $vote_repository->findOneBy([
-            'goodness' => $goodness_id,
-            'user' => $this->user->getId()
-        ]);
+	#[Route('/vote', name: 'vote_goodness')]
+	public function vote(
+		Request $request,
+		GoodnessRepository $goodness_repository,
+		VoteRepository $vote_repository,
+		VoteService $voteService
+	): JsonResponse {
 
-        if (!empty($vote)) {
-            if ($vote->getScoring()->name == $scoring_name) {
-                $response = $this->setResponse('error', 'vote already exists');
-                return $this->json($response);
-            }
+		$goodness_id = $request->get('goodness_id');
+		$scoring_name = $request->get('scoring_name');
 
-            $scoring = VoteScoringEnum::fromName($scoring_name);
+		if (empty($goodness_id)) {
+			$response = $this->setResponse('error', 'goodness empty');
+			return $this->json($response);
+		}
 
-            $vote->setScoring($scoring);
-            $this->saveVote($vote);
-            $response = $this->setResponse('success', 'vote updated');
-        } else {
-            $goodness = $goodness_repository->find($goodness_id);
-            $scoring = VoteScoringEnum::fromName($scoring_name);
-                
-            $this->createVote($goodness, $this->user, $scoring);
-            $response = $this->setResponse('success', 'vote added');
-        }
-        
-        return $this->json($response);
-    }
-    
-    public function createVote(Goodness $goodness, User $user, $scoring) : void {
-        $vote = new Vote();
-        $vote->setGoodness($goodness);
-        $vote->setUser($user);
-        $vote->setScoring($scoring);
-        $vote->setCreatedAt(new \DateTimeImmutable('now'));
-        
-        $this->saveVote($vote);
-    }
+		if (empty($scoring_name)) {
+			$response = $this->setResponse('error', 'scoring empty');
+			return $this->json($response);
+		}
 
-    public function saveVote(Vote $vote) : void {
-        $this->manager->persist($vote);
-        $this->manager->flush();
-    }
-    
-    private function setResponse(string $status, string $message) : array {
-        return [
-            'status' => $status,
-            'message' => $message
-        ];
-    }
+		$vote = $vote_repository->findOneBy([
+			'goodness' => $goodness_id,
+			'user'     => $this->user->getId()
+		]);
+
+		$scoring = VoteScoringEnum::fromName($scoring_name);
+
+		if (!empty($vote)) {
+			if ($vote->getScoring() === $scoring) {
+				$response = $this->setResponse('success', 'vote already exists');
+			} else {
+				$voteService->update($vote, $scoring);
+				$response = $this->setResponse('success', 'vote updated');
+			}
+		} else {
+			$goodness = $goodness_repository->find($goodness_id);
+
+			$voteService->create($goodness, $this->user, $scoring);
+			$response = $this->setResponse('success', 'vote added');
+		}
+
+		return $this->json($response);
+	}
+
+	private function setResponse(string $status, string $message): array
+	{
+		return [
+			'status'  => $status,
+			'message' => $message
+		];
+	}
 }
